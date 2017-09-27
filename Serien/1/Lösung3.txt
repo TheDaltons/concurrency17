@@ -1,0 +1,28 @@
+TYPTE MONITOR {
+BinarySemaphore bS=0,
+Lock lock,
+
+  Wait(){
+    Release(lock),
+    P(bS),
+    Aquire(lock),
+  }
+
+  Signal(){
+    V(bS)
+  }
+}
+
+
+TYPE LOCK{
+  BinarySemaphore bS=1,
+
+  Aquire(Lock lock){
+    P(lock.bS),
+  }
+
+  Release(Lock lock){
+    V(lock.bS),
+  }
+
+}
