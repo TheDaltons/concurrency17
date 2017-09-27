@@ -1,0 +1,71 @@
+{\rtf1\ansi\ansicpg1252\cocoartf1504\cocoasubrtf600
+{\fonttbl\f0\froman\fcharset0 TimesNewRomanPSMT;\f1\fswiss\fcharset0 Helvetica;}
+{\colortbl;\red255\green255\blue255;}
+{\*\expandedcolortbl;\csgray\c100000;}
+\paperw11900\paperh16840\margl1440\margr1440\vieww10800\viewh8400\viewkind0
+\deftab708
+\pard\pardeftab708\ri-386\partightenfactor0
+
+\f0\fs20 \cf0 1. Do recent central processing units (CPUs) of desktop PCs support concurrency? Why became concurrency\
+for many software applications very important these days?\
+\
+Concurrency is supported by single core (single thread) CPUs, e.g. by time-sharing. With the increasing number of cores and thus threads in modern CPU's there is a huge advantage for concurrency because threads/processes can e.g. run parallel. So recent desktop CPU's support concurrency.\
+\
+As in 'Concepts and Notations for Concurrent Programming' (http://scgresources.unibe.ch/Literature/CP/Andr83aSurvey.pdf), "...,concurrent programming no longer is the sole province of those who design and implement operating systems". It has been important for a long time. But the CPU evolution (price, cores, multisockets, ...) is one of the main reason it is getting more important, since we can now benefit more of it in software applications beside operating systems. Some examples are,  (as in lecture notes1: p15/15.5:) ) : - Reactive programming - Real-time programming - Simulation - Parallelism - Distribution, which where becoming increasingly important.\
+\
+2. What is safety? Give one concrete example of a safety violation.\
+\pard\pardeftab708\li708\fi-708\ri-386\partightenfactor0
+\cf0 Safety = ensuring consistency (slides p.18)\
+'One way of thinking about safety is that the data of our program are not corrupted.\
+\pard\pardeftab708\fi1\ri-386\partightenfactor0
+\cf0 Another way of thinking about safety is that the program does not reach a \'93bad state\'94. The \'93bad state\'94 can manifest itself as inconsistent memory, or perhaps some other undesirable property.' (slides p.18.5)\
+\pard\pardeftab708\li708\fi-708\ri-386\partightenfactor0
+\cf0 \
+\pard\pardeftab708\ri-386\partightenfactor0
+\cf0 'A procedure is thread safe when the procedure is logically correct when executed simultaneously by several threads' ("Multithreaded Programming Guide". Oracle Corporation. November 2010)\
+\
+thread1: x := 0, x=x+5\
+thread2: x := 0, x=x+2\
+x may not be 5 after thread1 ends.\
+\pard\pardeftab708\li708\fi-708\ri-386\partightenfactor0
+\cf0 \
+\pard\pardeftab708\ri-386\partightenfactor0
+\cf0 3. What is liveness? Give a concrete example of a liveness violation.\
+\
+Liveness = ensuring progress (slides p.19)\
+e.g. no deadlock or starvation, as threads waiting on each other doing no work.\
+y := 0, x := 0\
+thread1: while (x=0) \{y = 0\} ,  y = 1 , further progress\
+thread2: while (y=0) \{x = 0\} ,  x = 1 , further progress\
+\
+4. Using the implementation in the slides, can a binary semaphore lead to a deadlock? Can it lead to starvation?\
+Explain with the aid of an example.\
+\
+Starvation: If multiple processes want to access the same data with a binary semaphore, one of the processes may starve if there is not e.g. a queue for fairness.\
+\
+Deadlock:  data1 and data2 both secured by binary semaphors.\
+process1 accessed and now blocks data1 and wants to access data2 in its critical section\
+process2 accessed and now blocks data2 and wants to access data1 in its critical section
+\f1\fs24 \
+\pard\tx566\tx1133\tx1700\tx2267\tx2834\tx3401\tx3968\tx4535\tx5102\tx5669\tx6236\tx6803\pardirnatural\partightenfactor0
+\cf0 \
+\pard\pardeftab720\pardirnatural\partightenfactor0
+
+\f0\fs20 \cf0 5. Why do we need synchronization mechanisms in concurrent programs?\
+\
+Synchronisation is used to prevent problems of concurrent programming as e.g. :\
+Ensure safety:\
+Multiple threads may try to access critical data at the same time. Therefore the operating system must ensure that only one thread can access said critical data at a time and thus blocking the other threads from accessing until the first thread is no longer needs access. Then the data becomes available to other threads again.\
+\
+Ensure liveness/fairness:\
+Synchronization mechanisms should ensure liveness and fairness. Which means there shouldn\'92t be any deadlocks or starvation of threads. And thus ensures that every thread will make progress eventually.\
+\
+\
+6. How do monitors differ from semaphores? Please provide a precise answer.\
+\
+Unlike semaphores monitors encapsulate data structures that are only accessible through the monitor\'92s procedures. Monitors are a programming language construct (not available in any language). With monitors mutual exclusive access to data is ensured by the compiler or language run-time. Unlike counting semaphores only one process may be executing a monitor procedure at a time.\
+\
+7. How are monitors and message passing similar? And how are they different?\
+\
+Ada tasks will accept messages from unknown senders much like monitors do.\
+Monitores require shared memory while message passing does not.}
