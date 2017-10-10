@@ -1,0 +1,109 @@
+Series 02— 26.09.2017 – v1.0
+Concurrency and Java
+
+Exercise 1 (2 Points)
+Answer the following questions (0.5 point each):
+a. What states can a Java thread be in?
+https://www.journaldev.com/1044/thread-life-cycle-in-java-thread-states-in-java
+New Thread
+The thread is in the ‘new-state’ after creation of the thread class but before the invocation of start() method.
+Runnable
+After invocation of the start() method the thread is in the ‘runnable-state’.
+Running
+The thread is in ‘running-state’ if the scheduler has selected it.
+Non-Runnable
+The thread is still alive but currently not allowed to run
+Dead/Terminated
+The thread is in ‘dead/terminated-state’ when it’s run() method exits.
+b. How can you turn a Java class into a monitor?
+With a lock as in serie 1 exercise 3 so there is mutual exclusion given
+c. What is the Runnable interface good for?
+To implement the run() method. Since multiple inheritance is not supported(Thread and another Class) this is a way to later instantiate as by new Thread(Class instance with run() method).
+d. Specify an FSP that repeatedly performs hello, but may stop at any time.
+HELLO = (hello -> HELLO | stop -> STOP)
+
+Exercise 2 (2 Points)
+Consider the following Java implementation of a Singleton:
+Public class Singleton {
+private static Singleton instance = null;
+private Singleton() {}
+public static Singleton getInstance() {
+if(instance == null) {
+instance = new Singleton();
+}
+return instance;
+}
+}
+This implementation assumes a single-threaded application.
+a. What happens if the application is multithreaded?
+Safety is not provided. e.g. if two threads access getInstance() there may be a “bad State” of the instance provided by the singleton (e.g. two different instances provided).
+b. How to implement a thread-safe singleton in Java?
+Initialization-on-demand holder idiom: (https://en.wikipedia.org/wiki/Initialization-on-demand_holder_idiom)
+
+public class Something {
+    private Something() {}
+
+    private static class LazyHolder {
+        static final Something INSTANCE = new Something();
+    }
+
+    public static Something getInstance() {
+        return LazyHolder.INSTANCE;
+     }
+}
+
+We could also provide e.g. a Dog instance by the singleton instead of a Something instance (itself).
+
+“The static class definition LazyHolder within it is not initialized until the JVM determines that LazyHolder must be executed. The static class LazyHolder is only executed when the static method getInstance is invoked on the class Something, and the first time this happens the JVM will load and initialize the LazyHolder class. The initialization of the LazyHolder class results in static variable INSTANCE being initialized by executing the (private) constructor for the outer class Something. Since the class initialization phase is guaranteed by the JLS to be serial, i.e., non-concurrent, no further synchronization is required in the static getInstance method during loading and initialization. And since the initialization phase writes the static variable INSTANCE in a serial operation, all subsequent concurrent invocations of the getInstance will return the same correctly initialized INSTANCE without incurring any additional synchronization overhead.”
+
+(Something instances (methods + variables) have to care about their tread safety themselves)
+
+c. Suppose there is 1000 requests/second from different threads to this Singleton. Does your implementation introduce a bottleneck? If yes, how can you improve it?
+
+If e.g. “Something”, as in the singleton implementation, would be implemented as a monitor it would lead to a bottleneck. But else just the offered instance by the singleton could lead to a bottleneck and not the singleton itself.
+So our implementation does not introduce a bottleneck.
+
+Exercise 3 (3.5 Points)
+APPOINTMENT = (hello -> converse -> goodbye -> STOP).
+
+HOLIDAY = (arrive -> relax -> leave -> HOLIDAY).
+
+SPEED = (on -> ON),
+ON = (off -> SPEED | speed -> ON).
+
+
+LEFTONCE = (ahead -> AHEAD),
+AHEAD = (left -> STOP | right -> LEFTONCE).
+
+TREBLE=(in -> out -> TREBLE | in -> out -> TREBLE | in -> out -> TREBLE).
+
+FIVETICK = (tick -> tick -> tick -> tick -> tick -> STOP).
+
+PERSON = (workday -> THREE | holiday -> ONE ),
+ONE = ( sleep -> TWO ),
+TWO = (play -> PERSON | shop -> PERSON),
+THREE = (sleep -> FOUR),
+FOUR = (work -> PERSON).
+
+
+Exercise 4 (2.5 Points)
+Consider the full Race5K FSP from the lecture.
+a. How many states and how many possible traces does it have if the number of steps is 5 (as in the lecture)?
+States:
+“If two independent process are composed, the resulting state space is potentially the Cartesian product of the two state spaces.” , (lecture 2 slide 34.5)
+So it is 6 * 6 = 36 States
+
+Traces:
+lecture 2 slide 34 but with 5 steps:
+
+5 times to the right and 5 times to the bottom. We can write this as 10 times down:
+ddddd ddddd. So we have 10 possible “d” to convert to a “r” in the next step 9 possibilities etc. Since we place 5 we have 10! / 5! possibilities (10 * 9 * 8 * 7 * 6 * 5). Removing the redundancies (5!) we end with the formula from b.Traces :
+(10! / 5!) / 5! = 252 Traces
+
+b. What is the number of states and traces in the general case (i.e. for n steps)?
+
+#States = (n+1) * (n+1)
+
+#Traces= (2n! / n! ) / n!
+
+c. Check your solution using the LTSA tool.
